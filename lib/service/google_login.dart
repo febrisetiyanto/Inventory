@@ -12,7 +12,7 @@ class GoogleSignInService {
 
       final googleAuth = await googleUser.authentication;
 
-      // 🔑 Tambahan penting: login ke Supabase
+     
       await Supabase.instance.client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: googleAuth.idToken!,

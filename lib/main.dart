@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventory/pages/login.dart';
-import 'package:inventory/service/spalshscreen.dart';
+import 'package:inventory/pages/spalshscreen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 

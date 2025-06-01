@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:inventory/pages/dashboard.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'home.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -22,7 +23,7 @@ class _Login1State extends State<Login> {
       if (session != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomePage()),
+          MaterialPageRoute(builder: (_) => const Dashboard()),
         );
       }
     });

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventory/pages/home.dart';
+import 'package:inventory/pages/dashboard.dart';
 import 'package:inventory/pages/login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,18 +18,16 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _startSplash() async {
-    await Future.delayed(const Duration(seconds: 2)); // efek loading
+    await Future.delayed(const Duration(seconds: 2));
 
     final session = Supabase.instance.client.auth.currentSession;
 
     if (session != null) {
-      // User sudah login
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const Dashboard()),
       );
     } else {
-      // Belum login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const Login()),
@@ -39,8 +37,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text("Loading...", style: TextStyle(fontSize: 24))),
+    return  Scaffold(
+      body: Center(
+        child: Image.asset(
+          'assets/icon/1.jpg', // Ganti dengan path logo kamu
+          width: 150, // Atur ukuran sesuai kebutuhan
+          height: 150,
+        ),
+      ),
     );
   }
 }
