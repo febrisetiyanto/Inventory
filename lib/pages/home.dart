@@ -150,10 +150,10 @@ class _HomePageState extends State<HomePage> {
             page = const AdidasPage();
             break;
           case 'PUMA':
-            page = const Puma();
+            page = const PumaPage();
             break;
           case 'CONVERSE':
-            page = const Converse();
+            page = const ConversePage();
             break;
           default:
             page = Scaffold(

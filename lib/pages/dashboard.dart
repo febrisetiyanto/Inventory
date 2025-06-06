@@ -3,7 +3,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:inventory/pages/home.dart';
 import 'package:inventory/pages/inventory.dart';
 import 'package:inventory/pages/profile.dart';
-import 'package:inventory/pages/setting.dart';
+import 'package:inventory/pages/note.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -19,14 +19,14 @@ class _DashboardState extends State<Dashboard> {
     Icons.home,
     Icons.inventory,
     Icons.person,
-    Icons.settings,
+    Icons.note,
   ];
 
   final List<Widget> _screens = [
     HomePage(),
     InventoryPage(),
     ProfilePage(),
-    SettingPage(),
+    NotePage(),
   ];
 
   @override

@@ -153,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     _buildInfoRow('Email', user?.email ?? '-'),
                     _buildInfoRow(
                       'Provider',
-                      user?.appMetadata?['provider'] ?? '-',
+                      user?.appMetadata['provider'] ?? '-',
                     ),
                     _buildInfoRow(
                       'Terakhir Login',
