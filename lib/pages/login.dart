@@ -15,7 +15,7 @@ class _Login1State extends State<Login> {
   void initState() {
     super.initState();
 
-    // TARUH LISTENER DI SINI
+
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final session = data.session;
       print("SESSION: ${session?.accessToken}");

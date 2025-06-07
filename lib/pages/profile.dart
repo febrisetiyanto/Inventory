@@ -78,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header dengan avatar
+      
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   SizedBox(height: 20),
-                  // Avatar
+        
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.white,
@@ -119,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                   ),
                   SizedBox(height: 16),
-                  // Nama
+                
                   Text(
                     user?.userMetadata?['full_name'] ??
                         user?.userMetadata?['name'] ??
@@ -131,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  // Email
+                  
                   Text(
                     user?.email ?? 'Email tidak tersedia',
                     style: TextStyle(fontSize: 16, color: Colors.white70),
@@ -143,7 +143,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             SizedBox(height: 20),
 
-            // Informasi detail
+          
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -186,7 +186,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   SizedBox(height: 30),
 
-                  // Tombol logout
+            
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(

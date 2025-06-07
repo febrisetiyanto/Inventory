@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:inventory/service/product_service.dart'; // Import service yang diperlukan
+import 'package:inventory/service/product_service.dart'; 
 
 class PumaPage extends StatefulWidget {
   const PumaPage({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class _PumaPageState extends State<PumaPage> {
   List<dynamic> _pumaProducts = [];
   bool _isLoading = true;
 
-  // Controllers untuk edit form
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _productName = TextEditingController();
   final TextEditingController _productBrand = TextEditingController();
@@ -41,7 +41,7 @@ class _PumaPageState extends State<PumaPage> {
     final response = await supabase
         .from('products')
         .select()
-        .ilike('brand', 'Puma'); // Ambil brand "Puma" (tidak case sensitive)
+        .ilike('brand', 'Puma'); 
 
     setState(() {
       _pumaProducts = response;
@@ -50,7 +50,7 @@ class _PumaPageState extends State<PumaPage> {
   }
 
   void _showEditDialog(Map<String, dynamic> product) {
-    // Populate form dengan data product
+
     _productName.text = product['name'] ?? '';
     _productBrand.text = product['brand'] ?? '';
     _productSize.text = product['size']?.toString() ?? '';
@@ -75,7 +75,7 @@ class _PumaPageState extends State<PumaPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Image Preview
+                      
                         if (_productImageUrl.text.isNotEmpty)
                           Container(
                             height: 100,
@@ -249,7 +249,7 @@ class _PumaPageState extends State<PumaPage> {
           color: _productColor.text,
           price: double.parse(_productPrice.text),
           stock: int.parse(_productStock.text),
-          categoryId: null, // Sesuaikan dengan kebutuhan
+          categoryId: null,
           imageUrl:
               _productImageUrl.text.isEmpty ? null : _productImageUrl.text,
         );

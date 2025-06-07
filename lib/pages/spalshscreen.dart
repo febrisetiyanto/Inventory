@@ -40,8 +40,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return  Scaffold(
       body: Center(
         child: Image.asset(
-          'assets/icon/1.jpg', // Ganti dengan path logo kamu
-          width: 150, // Atur ukuran sesuai kebutuhan
+          'assets/icon/1.jpg', 
+          width: 150, 
           height: 150,
         ),
       ),

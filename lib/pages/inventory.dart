@@ -25,9 +25,7 @@ class _InventoryPageState extends State<InventoryPage> {
   final TextEditingController _productImageUrl = TextEditingController();
 
   List<Map<String, dynamic>> _categories = [];
-  List<Map<String, dynamic>> _products = [];
   String? _selectedCategoryId;
-  String? _editingProductId;
   File? _selectedImage;
   bool _isUploading = false;
 
@@ -36,19 +34,17 @@ class _InventoryPageState extends State<InventoryPage> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _fetchCategories();
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchCategories() async {
     try {
       final categories = await getAllCategories();
-      final products = await getAllProducts();
       setState(() {
         _categories = categories;
-        _products = products;
       });
     } catch (e) {
-      _showErrorSnackBar('Error fetching data: $e');
+      _showErrorSnackBar('Error fetching categories: $e');
     }
   }
 
@@ -64,8 +60,7 @@ class _InventoryPageState extends State<InventoryPage> {
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
-          _productImageUrl
-              .clear(); // Clear URL field when local image is selected
+          _productImageUrl.clear();
         });
       }
     } catch (e) {
@@ -85,8 +80,7 @@ class _InventoryPageState extends State<InventoryPage> {
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
-          _productImageUrl
-              .clear(); // Clear URL field when local image is selected
+          _productImageUrl.clear();
         });
       }
     } catch (e) {
@@ -136,7 +130,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-Future<void> _submitProduct() async {
+  Future<void> _submitProduct() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isUploading = true;
@@ -155,39 +149,21 @@ Future<void> _submitProduct() async {
           print('Using URL image: $imageUrl');
         }
 
-        if (_editingProductId == null) {
-          await createProduct(
-            name: _productName.text,
-            brand: _productBrand.text,
-            size: double.parse(
-              _productSize.text.isEmpty ? '0' : _productSize.text,
-            ),
-            color: _productColor.text,
-            price: double.parse(_productPrice.text),
-            stock: int.parse(_productStock.text),
-            categoryId: _selectedCategoryId,
-            imageUrl: imageUrl,
-          );
-          _showSuccessSnackBar('Product added successfully!');
-        } else {
-          await updateProduct(
-            id: _editingProductId!,
-            name: _productName.text,
-            brand: _productBrand.text,
-            size: double.parse(
-              _productSize.text.isEmpty ? '0' : _productSize.text,
-            ),
-            color: _productColor.text,
-            price: double.parse(_productPrice.text),
-            stock: int.parse(_productStock.text),
-            categoryId: _selectedCategoryId,
-            imageUrl: imageUrl,
-          );
-          _showSuccessSnackBar('Product updated successfully!');
-        }
+        await createProduct(
+          name: _productName.text,
+          brand: _productBrand.text,
+          size: double.parse(
+            _productSize.text.isEmpty ? '0' : _productSize.text,
+          ),
+          color: _productColor.text,
+          price: double.parse(_productPrice.text),
+          stock: int.parse(_productStock.text),
+          categoryId: _selectedCategoryId,
+          imageUrl: imageUrl,
+        );
 
+        _showSuccessSnackBar('Product added successfully!');
         _clearForm();
-        _fetchData();
       } catch (e) {
         print('Error in _submitProduct: $e');
         _showErrorSnackBar('Error saving product: $e');
@@ -199,13 +175,12 @@ Future<void> _submitProduct() async {
     }
   }
 
-  
   Future<void> _submitCategory() async {
     if (_categoryName.text.isNotEmpty) {
       try {
         await createCategory(_categoryName.text);
         _categoryName.clear();
-        _fetchData();
+        _fetchCategories();
         _showSuccessSnackBar('Category added successfully!');
       } catch (e) {
         _showErrorSnackBar('Error adding category: $e');
@@ -222,22 +197,7 @@ Future<void> _submitProduct() async {
     _productStock.clear();
     _productImageUrl.clear();
     _selectedCategoryId = null;
-    _editingProductId = null;
     _selectedImage = null;
-  }
-
-  void _populateForm(Map<String, dynamic> product) {
-    _productName.text = product['name'] ?? '';
-    _productBrand.text = product['brand'] ?? '';
-    _productSize.text = product['size'].toString();
-    _productColor.text = product['color'] ?? '';
-    _productPrice.text = product['price'].toString();
-    _productStock.text = product['stock'].toString();
-    _productImageUrl.text = product['image_url'] ?? '';
-    _selectedCategoryId = product['category_id'];
-    _editingProductId = product['id'];
-    _selectedImage = null; // Clear selected image when editing
-    setState(() {});
   }
 
   void _showSuccessSnackBar(String message) {
@@ -260,7 +220,7 @@ Future<void> _submitProduct() async {
     );
   }
 
-Widget _buildImagePreview() {
+  Widget _buildImagePreview() {
     if (_selectedImage != null) {
       return Container(
         height: 120,
@@ -292,7 +252,6 @@ Widget _buildImagePreview() {
               return const Center(child: CircularProgressIndicator());
             },
             errorBuilder: (context, error, stackTrace) {
-              // Enhanced error handling
               print('Image loading error: $error');
               print('Failed URL: ${_productImageUrl.text}');
               return Container(
@@ -339,16 +298,6 @@ Widget _buildImagePreview() {
     );
   }
 
-  // Enhanced image display for product list
-  String _getCategoryName(String? categoryId) {
-    if (categoryId == null) return 'No Category';
-    final category = _categories.firstWhere(
-      (cat) => cat['id'] == categoryId,
-      orElse: () => {'name': 'Unknown Category'},
-    );
-    return category['name'] ?? 'Unknown Category';
-  }
-
   @override
   void dispose() {
     _productName.dispose();
@@ -366,7 +315,7 @@ Widget _buildImagePreview() {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Inventory Management"),
+        title: const Text("Add Product"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: SingleChildScrollView(
@@ -374,6 +323,7 @@ Widget _buildImagePreview() {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Product Form
             Card(
               elevation: 4,
               child: Padding(
@@ -383,18 +333,16 @@ Widget _buildImagePreview() {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _editingProductId == null
-                            ? "Add New Product"
-                            : "Edit Product",
-                        style: const TextStyle(
+                      const Text(
+                        "Add New Product",
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      // Image Section
+                      // Product Image Section
                       const Text(
                         "Product Image",
                         style: TextStyle(fontWeight: FontWeight.w600),
@@ -435,7 +383,7 @@ Widget _buildImagePreview() {
 
                       const SizedBox(height: 16),
 
-                      // URL Input (alternative to image selection)
+                      // Image URL Field (only shown when no local image selected)
                       if (_selectedImage == null)
                         TextFormField(
                           controller: _productImageUrl,
@@ -449,7 +397,7 @@ Widget _buildImagePreview() {
 
                       const SizedBox(height: 16),
 
-                      // Product Details
+                      // Product Name
                       TextFormField(
                         controller: _productName,
                         decoration: const InputDecoration(
@@ -590,35 +538,15 @@ Widget _buildImagePreview() {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                  : Icon(
-                                    _editingProductId == null
-                                        ? Icons.add
-                                        : Icons.update,
-                                  ),
+                                  : const Icon(Icons.add),
                           label: Text(
-                            _isUploading
-                                ? "Processing..."
-                                : _editingProductId == null
-                                ? "Add Product"
-                                : "Update Product",
+                            _isUploading ? "Processing..." : "Add Product",
                           ),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
                       ),
-
-                      if (_editingProductId != null) ...[
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextButton.icon(
-                            onPressed: _clearForm,
-                            icon: const Icon(Icons.clear),
-                            label: const Text("Cancel Edit"),
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -627,7 +555,7 @@ Widget _buildImagePreview() {
 
             const SizedBox(height: 20),
 
-            // Category Section
+            // Category Form
             Card(
               elevation: 4,
               child: Padding(
@@ -669,181 +597,44 @@ Widget _buildImagePreview() {
 
             const SizedBox(height: 20),
 
-            // Products List
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Products List",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                TextButton.icon(
-                  onPressed: _fetchData,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text("Refresh"),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            if (_products.isEmpty)
-              const Card(
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Icon(Icons.inventory, size: 64, color: Colors.grey),
-                        SizedBox(height: 16),
-                        Text(
-                          'No products found',
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
-                        ),
-                        Text(
-                          'Add your first product above',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
+            // Quick Status Info
+            Card(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.info_outline,
+                      size: 48,
+                      color: Colors.blue,
                     ),
-                  ),
-                ),
-              )
-            else
-              ..._products.map(
-                (p) => Card(
-                  elevation: 3,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(12),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(
-                        width: 60,
-                        height: 60,
-                        child:
-                            p['image_url'] != null &&
-                                    p['image_url'].toString().isNotEmpty
-                                ? Image.network(
-                                  p['image_url'],
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (
-                                    context,
-                                    child,
-                                    loadingProgress,
-                                  ) {
-                                    if (loadingProgress == null) return child;
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                        color: Colors.grey.shade200,
-                                        child: const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                )
-                                : Container(
-                                  color: Colors.grey.shade200,
-                                  child: const Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.grey,
-                                  ),
-                                ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Product Added Successfully!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    title: Text(
-                      p['name'] ?? 'Unnamed Product',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Go to Notes page to view all your products',
+                      style: TextStyle(color: Colors.grey),
                     ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (p['brand']?.isNotEmpty == true)
-                          Text("Brand: ${p['brand']}"),
-                        Text("Category: ${_getCategoryName(p['category_id'])}"),
-                        Text(
-                          "Price: \$${p['price']?.toStringAsFixed(2) ?? '0.00'}",
-                        ),
-                        if (p['size'] != null) Text("Size: ${p['size']}"),
-                        if (p['color']?.isNotEmpty == true)
-                          Text("Color: ${p['color']}"),
-                        Text(
-                          "Stock: ${p['stock'] ?? 0}",
-                          style: TextStyle(
-                            color:
-                                (p['stock'] ?? 0) > 0
-                                    ? Colors.green
-                                    : Colors.red,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Navigate to Notes page
+                        Navigator.pushNamed(context, '/notes');
+                      },
+                      icon: const Icon(Icons.visibility),
+                      label: const Text('View Products'),
                     ),
-                    isThreeLine: true,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () => _populateForm(p),
-                          tooltip: 'Edit Product',
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
-                            final confirm = await showDialog<bool>(
-                              context: context,
-                              builder:
-                                  (context) => AlertDialog(
-                                    title: const Text('Delete Product'),
-                                    content: Text(
-                                      'Are you sure you want to delete "${p['name']}"?',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed:
-                                            () => Navigator.pop(context, false),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed:
-                                            () => Navigator.pop(context, true),
-                                        child: const Text(
-                                          'Delete',
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                            );
-
-                            if (confirm == true) {
-                              try {
-                                await deleteProduct(p['id']);
-                                _fetchData();
-                                _showSuccessSnackBar(
-                                  'Product deleted successfully!',
-                                );
-                              } catch (e) {
-                                _showErrorSnackBar(
-                                  'Error deleting product: $e',
-                                );
-                              }
-                            }
-                          },
-                          tooltip: 'Delete Product',
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
               ),
+            ),
           ],
         ),
       ),

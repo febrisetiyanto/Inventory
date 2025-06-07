@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:inventory/service/product_service.dart'; // Import service yang diperlukan
+import 'package:inventory/service/product_service.dart';
 
 class NikePage extends StatefulWidget {
   const NikePage({Key? key}) : super(key: key);
@@ -14,7 +14,6 @@ class _NikePageState extends State<NikePage> {
   List<dynamic> _nikeProducts = [];
   bool _isLoading = true;
 
-  // Controllers untuk edit form
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _productName = TextEditingController();
   final TextEditingController _productBrand = TextEditingController();
@@ -41,7 +40,7 @@ class _NikePageState extends State<NikePage> {
     final response = await supabase
         .from('products')
         .select()
-        .ilike('brand', 'Nike'); // Ambil brand "Nike" (tidak case sensitive)
+        .ilike('brand', 'Nike');
 
     setState(() {
       _nikeProducts = response;
@@ -50,7 +49,6 @@ class _NikePageState extends State<NikePage> {
   }
 
   void _showEditDialog(Map<String, dynamic> product) {
-    // Populate form dengan data product
     _productName.text = product['name'] ?? '';
     _productBrand.text = product['brand'] ?? '';
     _productSize.text = product['size']?.toString() ?? '';
@@ -75,7 +73,6 @@ class _NikePageState extends State<NikePage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Image Preview
                         if (_productImageUrl.text.isNotEmpty)
                           Container(
                             height: 100,
@@ -249,7 +246,7 @@ class _NikePageState extends State<NikePage> {
           color: _productColor.text,
           price: double.parse(_productPrice.text),
           stock: int.parse(_productStock.text),
-          categoryId: null, // Sesuaikan dengan kebutuhan
+          categoryId: null,
           imageUrl:
               _productImageUrl.text.isEmpty ? null : _productImageUrl.text,
         );
@@ -350,8 +347,6 @@ class _NikePageState extends State<NikePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Produk Nike'),
-        backgroundColor: Colors.orange.shade700,
-        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
