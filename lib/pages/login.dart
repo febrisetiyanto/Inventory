@@ -45,7 +45,7 @@ class _Login1State extends State<Login> {
               right: 10,
               child: Text(
                 "WELCOME",
-                style: TextStyle(color: Colors.red, fontSize: 30),
+                style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ),
             Positioned(
